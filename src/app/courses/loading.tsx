@@ -1,7 +1,7 @@
 export default function CoursesLoading() {
   return (
     <div className="min-h-screen pb-24">
-      {/* Header Skeleton */}
+      {}
       <header className="pt-16 pb-12 px-6 lg:px-8 max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="max-w-2xl w-full">
           <div className="h-4 w-32 bg-slate-200 dark:bg-slate-800 rounded-full mb-4 animate-pulse" />
@@ -13,15 +13,15 @@ export default function CoursesLoading() {
         </div>
       </header>
 
-      {/* Main Content Skeleton */}
+      {}
       <main className="px-6 lg:px-8 max-w-[1400px] mx-auto">
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* Sidebar Skeleton */}
+          {}
           <div className="w-full lg:w-72 flex-shrink-0">
             <div className="h-[400px] bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse" />
           </div>
 
-          {/* Grid Skeleton */}
+          {}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-8">
               <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />

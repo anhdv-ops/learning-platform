@@ -12,7 +12,6 @@ export default function Pagination({ totalPages, currentPage }: PaginationProps)
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // Không hiển thị pagination nếu chỉ có 1 trang
   if (totalPages <= 1) return null;
 
   const createPageURL = (pageNumber: number | string) => {
@@ -21,9 +20,8 @@ export default function Pagination({ totalPages, currentPage }: PaginationProps)
     return `${pathname}?${params.toString()}`
   }
 
-  // Thuật toán để rút gọn danh sách trang nếu quá nhiều (tạo ra dạng 1 ... 4 5 6 ... 10)
   const getVisiblePages = () => {
-    const delta = 1 // Số lượng nút hiển thị ở hai bên nút hiện tại
+    const delta = 1
     const range: number[] = []
     
     for (
@@ -35,15 +33,15 @@ export default function Pagination({ totalPages, currentPage }: PaginationProps)
     }
 
     if (currentPage - delta > 2) {
-      range.unshift(-1) // -1 biểu diễn dấu '...'
+      range.unshift(-1)
     }
     if (currentPage + delta < totalPages - 1) {
       range.push(-1)
     }
 
-    range.unshift(1) // Luôn hiện trang 1
+    range.unshift(1)
     if (totalPages > 1) {
-      range.push(totalPages) // Luôn hiện trang cuối
+      range.push(totalPages)
     }
 
     return range

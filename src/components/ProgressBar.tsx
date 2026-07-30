@@ -12,7 +12,6 @@ interface Props {
 export default function ProgressBar({ progress, variant = 'dark', size = 'md', hideLabel = false }: Props) {
   const [width, setWidth] = useState(0)
 
-  // Hiệu ứng chạy thanh ngang từ 0 lên giá trị thực khi component được render
   useEffect(() => {
     const timer = setTimeout(() => {
       setWidth(progress)
@@ -43,9 +42,9 @@ export default function ProgressBar({ progress, variant = 'dark', size = 'md', h
         </div>
       )}
       
-      {/* Container của thanh bar */}
+      {}
       <div className={`w-full ${heightClass} ${containerClass} rounded-full overflow-hidden`}>
-        {/* Phần đổ màu (có animation width) */}
+        {}
         <div 
           className={`h-full bg-gradient-to-r from-indigo-500 to-purple-400 rounded-full transition-all duration-1000 ease-out ${isLight ? '' : 'shadow-[0_0_10px_rgba(167,139,250,0.5)]'}`}
           style={{ width: `${width}%` }}

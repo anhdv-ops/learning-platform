@@ -15,7 +15,6 @@ export default function LoginPage() {
   const [submitError, setSubmitError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   
-  // Realtime validation cho Email
   useEffect(() => {
     if (email.trim() !== '') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -29,7 +28,6 @@ export default function LoginPage() {
     }
   }, [email])
 
-  // Realtime validation cho Password
   useEffect(() => {
     if (password.trim() !== '') {
       if (password.length < 6) {
@@ -42,7 +40,6 @@ export default function LoginPage() {
     }
   }, [password])
 
-  // Form chỉ hợp lệ khi cả 2 trường có dữ liệu và không có lỗi
   const isValid = email.trim().length > 0 && 
                   password.trim().length > 0 && 
                   emailError === '' && 
@@ -63,13 +60,11 @@ export default function LoginPage() {
     try {
       const result = await loginAction(formData)
       
-      // Nếu không có redirect mà có kết quả trả về, tức là có lỗi
       if (result && !result.success) {
         setSubmitError(result.error || 'Đăng nhập thất bại. Vui lòng thử lại.')
         setIsLoading(false)
       }
     } catch (error: unknown) {
-      // Đảm bảo không bắt nhầm lỗi do redirect từ Next.js
       if (
         error instanceof Error && 
         (error.message === 'NEXT_REDIRECT' || (error as Error & { digest?: string }).digest?.startsWith('NEXT_REDIRECT'))
@@ -83,11 +78,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 relative overflow-hidden p-4 sm:p-6 md:p-8 transition-colors duration-300">
-      {/* Background Glow Effects (Premium UI detail) */}
+      {}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-400/30 dark:bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-400/30 dark:bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Main Login Card */}
+      {}
       <div className="w-full max-w-md bg-card backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-12 shadow-2xl shadow-indigo-500/10 border border-border-subtle">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-extrabold text-slate-900 dark:!text-white mb-3 tracking-tight">
@@ -108,7 +103,7 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-          {/* Email Input Group */}
+          {}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2" htmlFor="email">
               Email
@@ -133,7 +128,7 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Password Input Group */}
+          {}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2" htmlFor="password">
               Mật khẩu
@@ -158,7 +153,7 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Submit Button */}
+          {}
           <button
             type="submit"
             disabled={!isValid || isLoading}

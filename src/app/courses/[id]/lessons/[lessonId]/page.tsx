@@ -11,15 +11,12 @@ type Props = {
 export default async function LessonDetailPage(props: Props) {
   const params = await props.params
   
-  // Gọi API lấy dữ liệu chi tiết bài học
   const lesson = await getLessonById(params.id, params.lessonId)
 
-  // Nếu bài học không tồn tại -> 404
   if (!lesson) {
     notFound()
   }
 
-  // Đọc cookie xem user đã từng đánh dấu hoàn thành bài này chưa (Mock Database)
   const cookieStore = await cookies()
   const hasCompletedCookie = cookieStore.get(`completed_${params.id}_${params.lessonId}`)?.value === 'true'
   const isCompleted = hasCompletedCookie || lesson.status === 'completed'
@@ -27,7 +24,7 @@ export default async function LessonDetailPage(props: Props) {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-24 px-4 sm:px-6 transition-colors duration-300">
       <div className="max-w-4xl mx-auto">
-        {/* Navigation - Quay lại khóa học */}
+        {}
         <Link 
           href={`/courses/${params.id}`}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors mb-8 group"
@@ -40,7 +37,7 @@ export default async function LessonDetailPage(props: Props) {
           Quay lại khóa học
         </Link>
 
-        {/* Video Player Khu vực môt phỏng */}
+        {}
         <div className="w-full aspect-video bg-slate-900 rounded-3xl mb-10 shadow-2xl overflow-hidden relative flex items-center justify-center border border-slate-800">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
           <div className="flex flex-col items-center gap-4">
@@ -55,7 +52,7 @@ export default async function LessonDetailPage(props: Props) {
           </div>
         </div>
 
-        {/* Thông tin Bài học chi tiết */}
+        {}
         <div className="bg-card rounded-3xl p-6 sm:p-10 shadow-sm border border-border-subtle">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
             <div>
@@ -75,7 +72,7 @@ export default async function LessonDetailPage(props: Props) {
               </h1>
             </div>
             
-            {/* Nút Client Component - Đánh dấu hoàn thành */}
+            {}
             <div className="flex-shrink-0 w-full sm:w-auto">
               <MarkCompleteButton 
                 courseId={params.id} 
@@ -85,7 +82,7 @@ export default async function LessonDetailPage(props: Props) {
             </div>
           </div>
 
-          {/* Nội dung bài học */}
+          {}
           <div className="prose prose-slate dark:prose-invert max-w-none prose-lg text-text-primary">
             <p>
               {lesson.description || 'Tổng quan chi tiết về mục tiêu và nội dung khóa học.'}
