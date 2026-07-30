@@ -88,20 +88,22 @@ export default function LoginPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-400/30 dark:bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main Login Card */}
-      <div className="relative w-full max-w-md bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-3">Đăng Nhập</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
+      <div className="w-full max-w-md bg-card backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-12 shadow-2xl shadow-indigo-500/10 border border-border-subtle">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:!text-white mb-3 tracking-tight">
+            Đăng Nhập
+          </h1>
+          <p className="text-slate-500 dark:!text-slate-400 text-sm font-medium px-4">
             Chào mừng trở lại! Vui lòng đăng nhập vào tài khoản của bạn.
           </p>
         </div>
 
         {submitError && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-start gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+          <div className="mb-6 p-4 bg-red-50 dark:!bg-red-950 border border-red-200 dark:!border-red-900 rounded-xl flex items-center gap-3 animate-shake">
+            <svg className="w-5 h-5 text-red-500 dark:!text-red-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
-            <span>{submitError}</span>
+            <p className="text-sm font-medium text-red-600 dark:text-red-400">{submitError}</p>
           </div>
         )}
 
@@ -117,10 +119,10 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full min-h-[44px] px-4 py-2.5 bg-white dark:bg-slate-950/50 border rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all duration-200 focus:outline-none focus:ring-2 ${
+                className={`w-full min-h-[44px] px-4 py-2.5 bg-input border rounded-xl text-text-primary placeholder:text-text-secondary transition-all duration-200 focus:outline-none focus:ring-2 ${
                   emailError 
-                    ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' 
-                    : 'border-slate-300 dark:border-slate-800 focus:border-indigo-500 focus:ring-indigo-500/20 hover:border-slate-400 dark:hover:border-slate-700'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                    : 'border-border-subtle focus:border-indigo-500 focus:ring-indigo-500/20 hover:border-slate-400'
                 }`}
                 placeholder="nam@example.com"
                 disabled={isLoading}
@@ -142,10 +144,10 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full min-h-[44px] px-4 py-2.5 bg-white dark:bg-slate-950/50 border rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all duration-200 focus:outline-none focus:ring-2 ${
+                className={`w-full min-h-[44px] px-4 py-2.5 bg-input border rounded-xl text-text-primary placeholder:text-text-secondary transition-all duration-200 focus:outline-none focus:ring-2 ${
                   passwordError 
-                    ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' 
-                    : 'border-slate-300 dark:border-slate-800 focus:border-indigo-500 focus:ring-indigo-500/20 hover:border-slate-400 dark:hover:border-slate-700'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                    : 'border-border-subtle focus:border-indigo-500 focus:ring-indigo-500/20 hover:border-slate-400'
                 }`}
                 placeholder="••••••••"
                 disabled={isLoading}
@@ -163,7 +165,7 @@ export default function LoginPage() {
             className={`cursor-pointer w-full min-h-[44px] mt-2 font-medium rounded-xl transition-all duration-300 flex items-center justify-center
               ${isValid && !isLoading 
                 ? 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5' 
-                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700'
+                : 'bg-slate-200 dark:bg-[#1e293b] text-slate-500 dark:text-slate-400 cursor-not-allowed border border-slate-300 dark:border-[#334155]'
               }
             `}
           >

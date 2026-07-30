@@ -58,7 +58,7 @@ export default function SearchFilter() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Tìm kiếm khóa học..."
-          className="block w-full pl-10 pr-4 py-2.5 min-h-[44px] border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm shadow-sm"
+          className="block w-full pl-10 pr-4 py-2.5 min-h-[44px] border border-border-subtle rounded-xl leading-5 bg-input text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm shadow-sm"
         />
       </div>
 
@@ -67,13 +67,13 @@ export default function SearchFilter() {
         <select
           value={initialLevel}
           onChange={handleLevelChange}
-          className="block w-full pl-4 pr-10 py-2.5 min-h-[44px] border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm appearance-none cursor-pointer shadow-sm"
+          className="block w-full pl-4 pr-10 py-2.5 min-h-[44px] border border-border-subtle rounded-xl leading-5 bg-input text-text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm appearance-none cursor-pointer shadow-sm"
         >
-          <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Tất cả (All)</option>
-          <option value="S" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">S (Starter)</option>
-          <option value="Pres" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Pres (Pre-Starter)</option>
-          <option value="TC" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">TC (Target Course)</option>
-          <option value="MTC" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">MTC (Master Target Course)</option>
+          <option value="" className="bg-input text-text-primary">Tất cả (All)</option>
+          <option value="S" className="bg-input text-text-primary">S (Starter)</option>
+          <option value="Pres" className="bg-input text-text-primary">Pres (Pre-Starter)</option>
+          <option value="TC" className="bg-input text-text-primary">TC (Target Course)</option>
+          <option value="MTC" className="bg-input text-text-primary">MTC (Master Target Course)</option>
         </select>
         <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

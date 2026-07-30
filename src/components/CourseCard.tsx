@@ -25,9 +25,9 @@ export default async function CourseCard({ course }: CourseCardProps) {
   const calculatedProgress = (completedCount / 4) * 100
 
   return (
-    <Link href={`/courses/${course.id}`} className="group relative flex flex-col bg-white dark:bg-zinc-900/60 rounded-[2rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 hover:scale-105 hover:border-indigo-500/30 dark:hover:border-indigo-500/40 h-full backdrop-blur-xl">
+    <Link href={`/courses/${course.id}`} className="group relative flex flex-col bg-card rounded-[2rem] overflow-hidden border border-border-subtle transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 hover:scale-105 hover:!border-indigo-500/30 h-full">
       {/* Thumbnail Container (Framed Style) */}
-      <div className="relative w-auto aspect-[4/3] overflow-hidden bg-zinc-100 dark:bg-zinc-800 m-2.5 rounded-t-[1.5rem] rounded-b-xl">
+      <div className="relative w-auto aspect-[4/3] overflow-hidden bg-background m-2.5 rounded-t-[1.5rem] rounded-b-xl">
         <Image
           src={course.thumbnail}
           alt={course.title}
@@ -61,12 +61,12 @@ export default async function CourseCard({ course }: CourseCardProps) {
       </div>
 
       {/* Content Section */}
-      <div className="flex flex-col flex-grow px-5 pt-3 pb-5">
-        <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
-          {course.title}
-        </h3>
-        
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-4 line-clamp-2 flex-grow">
+        <div className="p-5 flex flex-col flex-grow">
+          <h3 className="text-xl font-extrabold tracking-tight text-text-primary mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+            {course.title}
+          </h3>
+          
+          <p className="text-text-secondary text-sm leading-relaxed mb-4 line-clamp-2 flex-grow">
           {course.description}
         </p>
 
@@ -78,13 +78,13 @@ export default async function CourseCard({ course }: CourseCardProps) {
         {/* Fancy Action Footer */}
         <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/20">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-zinc-700 dark:text-zinc-300">
-              {course.totalLessons} <span className="font-medium text-zinc-500">bài học</span>
+            <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 text-text-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+            <span className="text-sm font-bold text-text-primary">
+              {course.totalLessons} <span className="font-medium text-text-secondary">bài học</span>
             </span>
           </div>
           

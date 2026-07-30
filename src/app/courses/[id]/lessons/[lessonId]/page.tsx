@@ -30,9 +30,9 @@ export default async function LessonDetailPage(props: Props) {
         {/* Navigation - Quay lại khóa học */}
         <Link 
           href={`/courses/${params.id}`}
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 font-semibold transition-colors mb-8 group"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors mb-8 group"
         >
-          <div className="bg-white dark:bg-slate-900 p-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-800 group-hover:scale-110 transition-transform">
+          <div className="bg-card p-2 rounded-full shadow-sm border border-border-subtle group-hover:scale-110 transition-transform">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -56,7 +56,7 @@ export default async function LessonDetailPage(props: Props) {
         </div>
 
         {/* Thông tin Bài học chi tiết */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="bg-card rounded-3xl p-6 sm:p-10 shadow-sm border border-border-subtle">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
@@ -85,9 +85,10 @@ export default async function LessonDetailPage(props: Props) {
             </div>
           </div>
 
-          <div className="prose prose-slate dark:prose-invert max-w-none">
-            <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed font-medium">
-              {lesson.description}
+          {/* Nội dung bài học */}
+          <div className="prose prose-slate dark:prose-invert max-w-none prose-lg text-text-primary">
+            <p>
+              {lesson.description || 'Tổng quan chi tiết về mục tiêu và nội dung khóa học.'}
             </p>
           </div>
         </div>
