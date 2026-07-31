@@ -149,10 +149,12 @@ export async function getCourses(
   q?: string,
   level?: string
 ): Promise<GetCoursesResponse> {
+  // Giả lập delay 500ms
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   let filteredCourses = [...MOCK_COURSES]
 
+  // Tìm kiếm theo từ khóa (title)
   if (q) {
     const searchKeyword = q.toLowerCase()
     filteredCourses = filteredCourses.filter(course =>
@@ -160,10 +162,12 @@ export async function getCourses(
     )
   }
 
+  // Lọc theo level
   if (level) {
     filteredCourses = filteredCourses.filter(course => course.level === level)
   }
 
+  // Phân trang
   const PAGE_SIZE = 9
   const startIndex = (page - 1) * PAGE_SIZE
   const paginatedCourses = filteredCourses.slice(startIndex, startIndex + PAGE_SIZE)
@@ -178,17 +182,19 @@ export async function getCourses(
 }
 
 export async function getCourseById(id: string): Promise<Course | null> {
+  // Giả lập delay mạng 500ms
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   const course = MOCK_COURSES.find(c => c.id === id)
   if (!course) return null
 
+  // Tạo mock data cho lessons (4 bài học mẫu)
   const mockLessons: Lesson[] = [
     {
       id: `l1-${course.id}`,
       courseId: course.id,
       title: 'Bài 1: Giới thiệu tổng quan',
-      duration: 300,
+      duration: 300, // 5 phút
       url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       description: 'Tổng quan chi tiết về mục tiêu và nội dung khóa học.',
       status: 'not-started',
@@ -198,7 +204,7 @@ export async function getCourseById(id: string): Promise<Course | null> {
       id: `l2-${course.id}`,
       courseId: course.id,
       title: 'Bài 2: Chiến thuật làm bài',
-      duration: 900,
+      duration: 900, // 15 phút
       url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       description: 'Các kỹ năng cốt lõi và mẹo làm bài để tiết kiệm thời gian.',
       status: 'not-started',
@@ -208,7 +214,7 @@ export async function getCourseById(id: string): Promise<Course | null> {
       id: `l3-${course.id}`,
       courseId: course.id,
       title: 'Bài 3: Thực hành bài tập mẫu',
-      duration: 1200,
+      duration: 1200, // 20 phút
       url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       description: 'Áp dụng các kỹ năng đã học vào đề thi thực tế.',
       status: 'not-started',
@@ -218,7 +224,7 @@ export async function getCourseById(id: string): Promise<Course | null> {
       id: `l4-${course.id}`,
       courseId: course.id,
       title: 'Bài 4: Chữa bài và rút kinh nghiệm',
-      duration: 1500,
+      duration: 1500, // 25 phút
       url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       description: 'Phân tích kỹ càng các lỗi sai học viên thường mắc phải.',
       status: 'not-started',
@@ -226,13 +232,16 @@ export async function getCourseById(id: string): Promise<Course | null> {
     }
   ]
 
+  // Trả về bản copy của course được ghép thêm mảng lessons động
   return { ...course, lessons: mockLessons }
 }
 
 export async function getLessonById(courseId: string, lessonId: string): Promise<Lesson | null> {
+  // Gọi hàm getCourseById để lấy course cùng với mảng lessons động
   const course = await getCourseById(courseId)
   if (!course) return null
 
+  // Tìm lesson theo ID
   const lesson = course.lessons.find(l => l.id === lessonId)
   return lesson || null
 }

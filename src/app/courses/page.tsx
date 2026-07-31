@@ -4,11 +4,13 @@ import CourseCard from '@/components/CourseCard'
 import SearchFilter from '@/components/SearchFilter'
 import Pagination from '@/components/Pagination'
 
+// Cấu hình chiến lược render ISR (Incremental Static Regeneration), revalidate sau 60s
 export const revalidate = 60
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 export default async function CoursesPage(props: { searchParams: SearchParams }) {
+  // Trích xuất params từ Promise (đặc tả của Next.js 15)
   const searchParams = await props.searchParams
   
   const q = typeof searchParams.q === 'string' ? searchParams.q : undefined
@@ -17,11 +19,12 @@ export default async function CoursesPage(props: { searchParams: SearchParams })
   
   const page = parseInt(pageParam, 10) || 1
 
+  // Gọi trực tiếp hàm lấy dữ liệu trên server
   const { courses, totalPages, currentPage } = await getCourses(page, q, level)
 
   return (
     <div className="min-h-screen pb-24">
-      {}
+      {/* Sleek Minimal Header */}
       <header className="pt-16 pb-12 px-6 lg:px-8 max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-4 text-zinc-900 dark:text-white">
@@ -46,10 +49,10 @@ export default async function CoursesPage(props: { searchParams: SearchParams })
       </header>
 
       <main className="max-w-[1400px] mx-auto px-6 lg:px-8">
-        {}
+        {/* Search & Filter */}
         <SearchFilter />
 
-        {}
+        {/* Empty State */}
         {courses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <span className="text-4xl mb-6">📭</span>
@@ -60,14 +63,14 @@ export default async function CoursesPage(props: { searchParams: SearchParams })
           </div>
         ) : (
           <>
-            {}
+            {/* Grid layout minimal */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 mb-16">
               {courses.map(course => (
                 <CourseCard key={course.id} course={course} />
               ))}
             </div>
             
-            {}
+            {/* Phân trang Client Component */}
             <Pagination totalPages={totalPages} currentPage={currentPage} />
           </>
         )}

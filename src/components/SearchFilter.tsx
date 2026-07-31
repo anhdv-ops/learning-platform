@@ -13,6 +13,7 @@ export default function SearchFilter() {
 
   const [searchTerm, setSearchTerm] = useState(initialSearch)
 
+  // Hàm tạo query string mới
   const createQueryString = (name: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) {
@@ -20,12 +21,15 @@ export default function SearchFilter() {
     } else {
       params.delete(name)
     }
+    // Xóa param page để đưa người dùng về trang 1 mỗi khi lọc/tìm kiếm
     params.delete('page')
     return params.toString()
   }
 
+  // Effect xử lý debounce cho ô tìm kiếm
   useEffect(() => {
     const timer = setTimeout(() => {
+      // Chỉ push lên URL nếu nội dung tìm kiếm khác với param hiện tại
       if (searchTerm !== (searchParams.get('q') || '')) {
         router.push(`${pathname}?${createQueryString('q', searchTerm)}`)
       }
@@ -34,6 +38,7 @@ export default function SearchFilter() {
     return () => clearTimeout(timer)
   }, [searchTerm, pathname, router, searchParams])
 
+  // Xử lý khi đổi level select
   const handleLevelChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
     router.push(`${pathname}?${createQueryString('level', value)}`)
@@ -41,7 +46,7 @@ export default function SearchFilter() {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8">
-      {}
+      {/* Ô tìm kiếm */}
       <div className="relative flex-grow max-w-md">
         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
           <svg className="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
@@ -57,7 +62,7 @@ export default function SearchFilter() {
         />
       </div>
 
-      {}
+      {/* Select lọc theo level */}
       <div className="relative w-full sm:w-48">
         <select
           value={initialLevel}

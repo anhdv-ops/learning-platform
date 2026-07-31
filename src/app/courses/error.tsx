@@ -1,4 +1,4 @@
-'use client'
+'use client' // Error components must be Client Components
 
 import { useEffect } from 'react'
 
@@ -10,12 +10,13 @@ export default function CoursesError({
   reset: () => void
 }) {
   useEffect(() => {
+    // Optionally log the error to an error reporting service
   }, [error])
 
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-4">
       <div className="bg-white dark:bg-slate-900 p-8 sm:p-12 rounded-3xl shadow-xl border border-red-100 dark:border-red-900/30 text-center max-w-lg w-full relative overflow-hidden">
-        {}
+        {/* Top accent line */}
         <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500" />
         
         <div className="w-20 h-20 bg-red-100 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -34,6 +35,7 @@ export default function CoursesError({
         
         <button
           onClick={
+            // Attempt to recover by trying to re-render the segment
             () => reset()
           }
           className="w-full px-6 py-3.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all active:scale-95 shadow-lg shadow-red-500/30"
