@@ -147,7 +147,7 @@ export default async function CourseDetailPage(props: Props) {
                 
                 <div className="flex-grow">
                   <h3 className="text-lg font-bold text-text-primary group-hover:text-indigo-600 transition-colors">
-                    Bài {index + 1}: {lesson.title}
+                    {lesson.title}
                   </h3>
                   <div className="flex items-center gap-2 mt-1 text-text-secondary text-sm font-medium">
                     <span className="flex items-center gap-1.5">
