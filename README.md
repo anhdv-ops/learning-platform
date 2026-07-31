@@ -26,6 +26,11 @@ Một nền tảng học trực tuyến hiện đại, mượt mà và tối ưu
    ```
    Sau đó mở trình duyệt và truy cập vào [http://localhost:3000](http://localhost:3000).
 
+4. **Tài khoản kiểm thử (Test Account):**
+   Dự án sử dụng API từ DummyJSON để mô phỏng đăng nhập. Bạn có thể sử dụng thông tin sau:
+   - **Email:** `emilys@gmail.com` (hoặc bất kỳ email nào bắt đầu bằng `emilys@`)
+   - **Mật khẩu:** `emilyspass`
+
 ---
 
 ## Các Chiến Lược Render (Render Strategies) Được Sử Dụng
