@@ -14,8 +14,8 @@ export interface Course {
   title: string;
   description: string;
   thumbnail: string;
-  level: 'S' | 'Pres' | 'TC' | 'MTC';
-  kindOfCourse: 'IELTS' | 'TOEIC' | '4SKILLS' | 'VSTEP';
+  level: string;
+  kindOfCourse: string;
   totalLessons: number;
   progress: number;
   status?: string;

@@ -1,7 +1,7 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 
 export async function loginAction(formData: FormData) {
   const email = formData.get('email')
@@ -19,43 +19,55 @@ export async function loginAction(formData: FormData) {
   if (password.length < 6) {
     return { success: false, error: 'Mật khẩu phải có ít nhất 6 ký tự' }
   }
-
-  const username = email.split('@')[0] || 'emilys'
   
-  try {
-    const response = await fetch('https://dummyjson.com/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    })
+  const supabase = await createClient()
 
-    const data = await response.json()
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
 
-    if (!response.ok) {
-      const errorMessage = data.message === 'Invalid credentials' 
-        ? 'Tài khoản/ Mật khẩu không tồn tại' 
-        : (data.message || 'Đăng nhập thất bại từ API.')
-      
-      return { success: false, error: errorMessage }
-    }
-
-    const cookieStore = await cookies()
-    cookieStore.set('token', data.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-    })
-  } catch (error) {
-    return { success: false, error: 'Lỗi kết nối đến máy chủ xác thực.' }
+  if (error) {
+    return { success: false, error: error.message }
   }
-  redirect('/courses')
+
+  return { success: true }
+}
+
+export async function signupAction(formData: FormData) {
+  const email = formData.get('email')
+  const password = formData.get('password')
+
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    return { success: false, error: 'Email và mật khẩu là bắt buộc' }
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email)) {
+    return { success: false, error: 'Email không hợp lệ' }
+  }
+
+  if (password.length < 6) {
+    return { success: false, error: 'Mật khẩu phải có ít nhất 6 ký tự' }
+  }
+
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  return { success: true }
 }
 
 export async function logoutAction() {
-  const cookieStore = await cookies()
-  cookieStore.delete('token')
+  const supabase = await createClient()
+  await supabase.auth.signOut()
+  
   redirect('/auth/login')
 }

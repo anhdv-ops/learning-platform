@@ -2,7 +2,7 @@ import { getLessonById } from '@/lib/api'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import MarkCompleteButton from '@/components/MarkCompleteButton'
-import { cookies } from 'next/headers'
+import VideoPlayer from '@/components/VideoPlayer'
 
 type Props = {
   params: Promise<{ id: string; lessonId: string }>
@@ -10,83 +10,85 @@ type Props = {
 
 export default async function LessonDetailPage(props: Props) {
   const params = await props.params
-  
-  // Gọi API lấy dữ liệu chi tiết bài học
+
   const lesson = await getLessonById(params.id, params.lessonId)
 
-  // Nếu bài học không tồn tại -> 404
   if (!lesson) {
     notFound()
   }
 
-  // Đọc cookie xem user đã từng đánh dấu hoàn thành bài này chưa (Mock Database)
-  const cookieStore = await cookies()
-  const hasCompletedCookie = cookieStore.get(`completed_${params.id}_${params.lessonId}`)?.value === 'true'
-  const isCompleted = hasCompletedCookie || lesson.status === 'completed'
+  const isCompleted = lesson.status === 'completed'
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-24 px-4 sm:px-6 transition-colors duration-300">
+    <div className="min-h-screen pb-20 pt-8 px-4 sm:px-6 animate-fade-in">
       <div className="max-w-4xl mx-auto">
-        {/* Navigation - Quay lại khóa học */}
-        <Link 
-          href={`/courses/${params.id}`}
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors mb-8 group"
-        >
-          <div className="bg-card p-2 rounded-full shadow-sm border border-border-subtle group-hover:scale-110 transition-transform">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-          </div>
-          Quay lại khóa học
-        </Link>
-
-        {/* Video Player Khu vực môt phỏng */}
-        <div className="w-full aspect-video bg-slate-900 rounded-3xl mb-10 shadow-2xl overflow-hidden relative flex items-center justify-center border border-slate-800">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
-          <div className="flex flex-col items-center gap-4">
-            <button className="w-16 h-16 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110">
-              <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-3 mb-8 flex-wrap text-sm">
+          <Link
+            href="/courses"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-accent-violet font-medium transition-colors group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-bg-card flex items-center justify-center border border-border-subtle group-hover:border-border-accent group-hover:bg-accent-violet/10 transition-all">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-            </button>
-            <div className="text-white/50 text-sm font-medium tracking-wide">
-              Trình phát Video (Mô phỏng)
             </div>
-          </div>
+            Trang chủ
+          </Link>
+          <span className="text-text-tertiary">/</span>
+          <Link
+            href={`/courses/${params.id}`}
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-accent-violet font-medium transition-colors group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-bg-card flex items-center justify-center border border-border-subtle group-hover:border-border-accent group-hover:bg-accent-violet/10 transition-all">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </div>
+            Quay lại khóa học
+          </Link>
         </div>
 
-        {/* Thông tin Bài học chi tiết */}
-        <div className="bg-card rounded-3xl p-6 sm:p-10 shadow-sm border border-border-subtle">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
+        {/* Video Player Thumbnail */}
+        <VideoPlayer
+          url={lesson.url}
+          title={lesson.title}
+          lessonId={lesson.id}
+          courseId={lesson.courseId}
+        />
+
+        {/* Lesson Info Card */}
+        <div className="glass-card p-6 sm:p-8" style={{ borderRadius: 'var(--radius-2xl)' }}>
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-3.5 py-1.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 text-xs font-black uppercase tracking-wider rounded-full">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 text-[11px] font-bold uppercase tracking-wider rounded-full border border-purple-500/30">
                   Bài {lesson.order}
                 </span>
-                <span className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 font-bold">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <span className="flex items-center gap-1.5 text-xs text-text-secondary font-semibold">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   {Math.round(lesson.duration / 60)} phút
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary tracking-tight">
                 {lesson.title}
               </h1>
             </div>
-            
-            {/* Nút Client Component - Đánh dấu hoàn thành */}
+
+            {/* Mark Complete Button */}
             <div className="flex-shrink-0 w-full sm:w-auto">
-              <MarkCompleteButton 
-                courseId={params.id} 
-                lessonId={params.lessonId} 
+              <MarkCompleteButton
+                courseId={params.id}
+                lessonId={params.lessonId}
                 initialCompleted={isCompleted}
               />
             </div>
           </div>
 
-          {/* Nội dung bài học */}
-          <div className="prose prose-slate dark:prose-invert max-w-none prose-lg text-text-primary">
+          {/* Lesson Content */}
+          <div className="text-text-secondary text-sm leading-relaxed">
             <p>
               {lesson.description || 'Tổng quan chi tiết về mục tiêu và nội dung khóa học.'}
             </p>

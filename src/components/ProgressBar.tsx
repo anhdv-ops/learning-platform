@@ -4,15 +4,13 @@ import { useEffect, useState } from 'react'
 
 interface Props {
   progress: number
-  variant?: 'light' | 'dark'
   size?: 'sm' | 'md'
   hideLabel?: boolean
 }
 
-export default function ProgressBar({ progress, variant = 'dark', size = 'md', hideLabel = false }: Props) {
+export default function ProgressBar({ progress, size = 'md', hideLabel = false }: Props) {
   const [width, setWidth] = useState(0)
 
-  // Hiệu ứng chạy thanh ngang từ 0 lên giá trị thực khi component được render
   useEffect(() => {
     const timer = setTimeout(() => {
       setWidth(progress)
@@ -20,36 +18,35 @@ export default function ProgressBar({ progress, variant = 'dark', size = 'md', h
     return () => clearTimeout(timer)
   }, [progress])
 
-  const isLight = variant === 'light'
-  
-  const textClass = isLight ? "text-slate-700 dark:text-slate-300" : "text-white drop-shadow-md"
-  const percentClass = isLight ? "text-indigo-600 dark:text-indigo-400" : "text-indigo-300 drop-shadow-md"
-  const containerClass = isLight ? "bg-slate-200 dark:bg-slate-700 shadow-inner" : "bg-white/20 backdrop-blur-md border border-white/10 shadow-inner"
-  
-  const heightClass = size === 'sm' ? "h-1.5" : "h-3"
-  const textBase = size === 'sm' ? "text-xs" : "text-sm"
-  const mtClass = size === 'sm' ? "mt-3" : "mt-6"
+  const heightClass = size === 'sm' ? 'h-1.5' : 'h-2.5'
+  const textBase = size === 'sm' ? 'text-xs' : 'text-sm'
+  const mtClass = size === 'sm' ? 'mt-0' : 'mt-4'
 
   return (
-    <div className={`w-full max-w-md ${mtClass}`}>
+    <div className={`w-full ${mtClass}`}>
       {!hideLabel && (
-        <div className="flex justify-between items-end mb-1.5">
-          <span className={`${textBase} font-bold ${textClass}`}>
+        <div className="flex justify-between items-end mb-2">
+          <span className={`${textBase} font-medium text-text-secondary`}>
             Tiến độ
           </span>
-          <span className={`${textBase} font-bold ${percentClass}`}>
+          <span className={`${textBase} font-bold gradient-text`}>
             {Math.round(progress)}%
           </span>
         </div>
       )}
-      
-      {/* Container của thanh bar */}
-      <div className={`w-full ${heightClass} ${containerClass} rounded-full overflow-hidden`}>
-        {/* Phần đổ màu (có animation width) */}
-        <div 
-          className={`h-full bg-gradient-to-r from-indigo-500 to-purple-400 rounded-full transition-all duration-1000 ease-out ${isLight ? '' : 'shadow-[0_0_10px_rgba(167,139,250,0.5)]'}`}
+
+      {/* Track */}
+      <div className={`w-full ${heightClass} bg-bg-card rounded-full overflow-hidden border border-border-subtle`}>
+        {/* Fill */}
+        <div
+          className="h-full bg-gradient-to-r from-accent-violet to-accent-cyan rounded-full transition-all duration-1000 ease-out relative"
           style={{ width: `${width}%` }}
-        />
+        >
+          {/* Subtle glow on the tip */}
+          {width > 5 && (
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-accent-cyan rounded-full blur-sm opacity-60" />
+          )}
+        </div>
       </div>
     </div>
   )

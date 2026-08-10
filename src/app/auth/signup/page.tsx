@@ -3,16 +3,15 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { loginAction } from '@/actions/auth'
+import { signupAction } from '@/actions/auth'
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Derived validation state
   const isEmailTouched = email.trim() !== ''
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const emailError = isEmailTouched && !emailRegex.test(email) ? 'Email không đúng định dạng' : ''
@@ -34,12 +33,12 @@ export default function LoginPage() {
     formData.append('password', password)
 
     try {
-      const result = await loginAction(formData)
+      const result = await signupAction(formData)
       if (result && result.success) {
         router.push('/courses')
         router.refresh()
       } else if (result && !result.success) {
-        setSubmitError(result.error || 'Đăng nhập thất bại. Vui lòng thử lại.')
+        setSubmitError(result.error || 'Đăng ký thất bại. Vui lòng thử lại.')
         setIsLoading(false)
       }
     } catch {
@@ -52,9 +51,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 relative overflow-hidden">
       {/* Animated gradient mesh background */}
       <div className="absolute inset-0 bg-bg-primary">
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-600/10 blur-[120px] animate-gradient-shift" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-500/10 blur-[120px] animate-gradient-shift" style={{ animationDelay: '4s' }} />
-        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] rounded-full bg-purple-500/5 blur-[80px] animate-float" />
+        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-cyan-500/10 blur-[120px] animate-gradient-shift" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/10 blur-[120px] animate-gradient-shift" style={{ animationDelay: '4s' }} />
+        <div className="absolute bottom-[30%] left-[20%] w-[30%] h-[30%] rounded-full bg-cyan-500/5 blur-[80px] animate-float" />
       </div>
 
       <div className="relative z-10 max-w-md w-full animate-slide-up">
@@ -71,8 +70,8 @@ export default function LoginPage() {
         {/* Glass Card */}
         <div className="glass-card p-8 sm:p-10 animate-pulse-glow" style={{ borderRadius: 'var(--radius-2xl)' }}>
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-text-primary mb-2">Chào mừng trở lại</h1>
-            <p className="text-sm text-text-secondary">Đăng nhập để tiếp tục hành trình học tập</p>
+            <h1 className="text-2xl font-bold text-text-primary mb-2">Tạo tài khoản mới</h1>
+            <p className="text-sm text-text-secondary">Bắt đầu hành trình học tập miễn phí</p>
           </div>
 
           {submitError && (
@@ -86,11 +85,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1.5" htmlFor="login-email">
+              <label className="block text-sm font-medium text-text-secondary mb-1.5" htmlFor="signup-email">
                 Email
               </label>
               <input
-                id="login-email"
+                id="signup-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -104,11 +103,11 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1.5" htmlFor="login-password">
+              <label className="block text-sm font-medium text-text-secondary mb-1.5" htmlFor="signup-password">
                 Mật khẩu
               </label>
               <input
-                id="login-password"
+                id="signup-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -135,15 +134,15 @@ export default function LoginPage() {
                   Đang xử lý...
                 </>
               ) : (
-                'Đăng nhập'
+                'Đăng ký'
               )}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-text-secondary">
-            Chưa có tài khoản?{' '}
-            <Link href="/auth/signup" className="font-semibold gradient-text hover:opacity-80 transition-opacity">
-              Đăng ký ngay
+            Đã có tài khoản?{' '}
+            <Link href="/auth/login" className="font-semibold gradient-text hover:opacity-80 transition-opacity">
+              Đăng nhập ngay
             </Link>
           </p>
         </div>

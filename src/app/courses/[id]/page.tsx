@@ -6,16 +6,14 @@ import { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import ProgressBar from '@/components/ProgressBar'
 
-// Note: Trong Next.js 15, params trong dynamic routes là một Promise
 type Props = {
   params: Promise<{ id: string }>
 }
 
-// 1. Tạo Metadata động cho SEO
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const course = await getCourseById(params.id)
-  
+
   if (!course) {
     return {
       title: 'Khóa học không tồn tại',
@@ -23,12 +21,11 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${course.title} | Learning Platform`,
+    title: `${course.title} | LishTex`,
     description: course.description,
   }
 }
 
-// 2. SSG: Pre-render một số khóa học phổ biến lúc build
 export async function generateStaticParams() {
   return [
     { id: 'c1' },
@@ -37,32 +34,27 @@ export async function generateStaticParams() {
   ]
 }
 
-// 3. Main Server Component
 export default async function CourseDetailPage(props: Props) {
   const params = await props.params
   const course = await getCourseById(params.id)
 
-  // Bắt lỗi 404 nếu không tìm thấy ID
   if (!course) {
     notFound()
   }
 
-  // Đọc toàn bộ cookie một lần để check trạng thái hoàn thành của bài học
   const cookieStore = await cookies()
 
-  // Tính toán tiến độ học tập (Progress Tracking)
   const totalLessons = course.lessons.length
-  const completedLessonsCount = course.lessons.filter(lesson => 
-    lesson.status === 'completed' || 
+  const completedLessonsCount = course.lessons.filter(lesson =>
+    lesson.status === 'completed' ||
     cookieStore.get(`completed_${course.id}_${lesson.id}`)?.value === 'true'
   ).length
   const progress = totalLessons > 0 ? (completedLessonsCount / totalLessons) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 transition-colors duration-300">
-      {/* HEADER SECTION */}
-      <div className="relative w-full h-[40vh] min-h-[350px] max-h-[500px]">
-        {/* Cover Image */}
+    <div className="min-h-screen pb-20 animate-fade-in">
+      {/* HERO SECTION */}
+      <div className="relative w-full h-[35vh] min-h-[300px] max-h-[450px]">
         <Image
           src={course.thumbnail}
           alt={course.title}
@@ -71,112 +63,112 @@ export default async function CourseDetailPage(props: Props) {
           priority
           sizes="100vw"
         />
-        {/* Gradient overlay để làm nổi bật text */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/50 to-transparent" />
-        
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/60 to-bg-primary/20" />
+
         {/* Course Info */}
-        <div className="absolute bottom-0 left-0 w-full p-6 sm:p-10 lg:p-16 max-w-7xl mx-auto flex flex-col justify-end">
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span className="px-3 py-1 bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg shadow-indigo-500/30">
+        <div className="absolute bottom-0 left-0 w-full p-6 sm:p-10 lg:p-12 max-w-5xl mx-auto flex flex-col justify-end">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="px-3 py-1 bg-purple-600/90 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded-full border border-white/10">
               {course.kindOfCourse}
             </span>
-            <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider rounded-full">
+            <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded-full border border-white/10">
               Level {course.level}
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-md">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
             {course.title}
           </h1>
-          <p className="text-slate-200 text-base sm:text-lg max-w-3xl font-medium drop-shadow mb-2">
+          <p className="text-white/70 text-sm sm:text-base max-w-3xl font-medium mb-4">
             {course.description}
           </p>
-          
-          {/* Thanh Tiến Độ Học Tập */}
-          <ProgressBar progress={progress} />
+
+          {/* Progress Bar */}
+          <div className="max-w-sm">
+            <ProgressBar progress={progress} size="sm" />
+          </div>
         </div>
       </div>
 
-      {/* LESSON LIST SECTION */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8 sm:mt-12">
-        {/* Navigation - Quay lại danh sách khóa học */}
-        <Link 
+      {/* LESSON LIST */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
+        {/* Back navigation */}
+        <Link
           href="/courses"
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 font-semibold transition-colors mb-8 group w-fit"
+          className="inline-flex items-center gap-2.5 text-text-secondary hover:text-accent-violet font-medium transition-colors mb-8 group text-sm"
         >
-          <div className="bg-white dark:bg-slate-900 p-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-800 group-hover:scale-110 transition-transform">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <div className="w-8 h-8 rounded-xl bg-bg-card flex items-center justify-center border border-border-subtle group-hover:border-border-accent group-hover:bg-accent-violet/10 transition-all">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
           </div>
           Quay lại danh sách khóa học
         </Link>
 
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <svg className="w-6 h-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-text-primary flex items-center gap-2.5">
+            <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
             Nội dung khóa học
           </h2>
-          <span className="text-indigo-700 dark:text-indigo-300 font-semibold bg-indigo-100 dark:bg-indigo-900/30 px-4 py-1.5 rounded-full text-sm">
+          <span className="text-purple-300 font-semibold bg-purple-500/20 px-3 py-1 rounded-full text-sm border border-purple-500/30">
             {course.lessons.length} bài học
           </span>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {course.lessons.map((lesson, index) => {
-            // Kiểm tra xem user đã hoàn thành bài này chưa (từ DB mock hoặc cookie)
-            const isCompleted = 
-              lesson.status === 'completed' || 
+            const isCompleted =
+              lesson.status === 'completed' ||
               cookieStore.get(`completed_${course.id}_${lesson.id}`)?.value === 'true'
 
             return (
-            <Link 
-              key={lesson.id} 
-              href={`/courses/${course.id}/lessons/${lesson.id}`}
-              className="group flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-4 sm:p-5 bg-card rounded-2xl shadow-sm hover:shadow-md hover:shadow-indigo-500/5 transition-all border border-border-subtle hover:border-indigo-300 dark:hover:border-indigo-500/50 relative overflow-hidden"
-            >
-              {/* STYLING BORDER HOVER EFFECT */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 scale-y-0 group-hover:scale-y-100 transition-transform origin-center duration-300" />
-              
-              <div className="flex items-center gap-4 sm:gap-6 flex-grow">
-                {/* Number indicator */}
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-background text-slate-400 font-black text-lg rounded-full group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                  {index + 1}
-                </div>
-                
-                <div className="flex-grow">
-                  <h3 className="text-lg font-bold text-text-primary group-hover:text-indigo-600 transition-colors">
-                    {lesson.title}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1 text-text-secondary text-sm font-medium">
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <Link
+                key={lesson.id}
+                href={`/courses/${course.id}/lessons/${lesson.id}`}
+                className={`group glass-card flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 p-4 sm:p-5 relative overflow-hidden hover:border-border-accent animate-slide-up stagger-${Math.min(index + 1, 9)}`}
+              >
+                {/* Accent line on hover */}
+                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent-violet to-accent-cyan scale-y-0 group-hover:scale-y-100 transition-transform origin-center duration-300" />
+
+                <div className="flex items-center gap-4 sm:gap-5 flex-grow">
+                  {/* Number */}
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-bg-card text-text-tertiary font-bold text-sm rounded-xl group-hover:bg-accent-violet/10 group-hover:text-accent-violet transition-colors border border-border-subtle">
+                    {index + 1}
+                  </div>
+
+                  <div className="flex-grow">
+                    <h3 className="text-sm font-semibold text-text-primary group-hover:text-accent-violet transition-colors">
+                      {lesson.title}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1 text-text-tertiary text-xs font-medium">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       {Math.round(lesson.duration / 60)} phút
-                    </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Status Badge */}
-              <div className="flex-shrink-0 pl-16 sm:pl-0">
-                {isCompleted ? (
-                  <span className="px-3.5 py-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full flex items-center justify-center gap-1.5 w-fit">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Đã học
-                  </span>
-                ) : (
-                  <span className="text-sm font-bold bg-background text-text-primary px-4 py-2 rounded-xl group-hover:bg-border-subtle transition-colors border border-border-subtle">
-                        CHƯA HỌC
-                  </span>
-                )}
-              </div>
-            </Link>
-          )})}
+                {/* Status Badge */}
+                <div className="flex-shrink-0 pl-14 sm:pl-0">
+                  {isCompleted ? (
+                    <span className="px-3 py-1.5 bg-success-soft text-success text-[11px] font-bold uppercase tracking-wider rounded-full flex items-center justify-center gap-1.5 w-fit border border-success/20">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Đã học
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold bg-bg-card text-text-secondary px-3 py-1.5 rounded-full border border-border-subtle">
+                      Chưa học
+                    </span>
+                  )}
+                </div>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </div>
