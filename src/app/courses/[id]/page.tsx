@@ -24,9 +24,35 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     }
   }
 
+  const courseTitle = `${course.title} | LishTex`
+  const courseDescription = course.description || 'Khóa học tiếng Anh chất lượng cao tại LishTex.'
+  const courseImage = course.thumbnail || '/og-banner.png'
+
   return {
-    title: `${course.title} | LishTex`,
-    description: course.description,
+    title: courseTitle,
+    description: courseDescription,
+    openGraph: {
+      title: courseTitle,
+      description: courseDescription,
+      url: `/courses/${course.id}`,
+      siteName: 'LishTex',
+      type: 'article',
+      locale: 'vi_VN',
+      images: [
+        {
+          url: courseImage,
+          width: 1200,
+          height: 630,
+          alt: course.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: courseTitle,
+      description: courseDescription,
+      images: [courseImage],
+    },
   }
 }
 
