@@ -26,8 +26,12 @@ CREATE INDEX IF NOT EXISTS idx_course_reviews_course_id ON course_reviews(course
 CREATE INDEX IF NOT EXISTS idx_course_reviews_user_id ON course_reviews(user_id);
 
 -- 3. Create Trigger Function to recalculate aggregated stats
+-- NOTE: SECURITY DEFINER is required so the function can update the courses table regardless of caller's RLS policies
 CREATE OR REPLACE FUNCTION update_course_rating_stats()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
   target_course_id TEXT;
   calc_avg NUMERIC(3, 2);
@@ -65,6 +69,12 @@ FOR EACH ROW EXECUTE FUNCTION update_course_rating_stats();
 -- 5. Row Level Security (RLS)
 ALTER TABLE course_reviews ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if any to prevent duplicate policy errors
+DROP POLICY IF EXISTS "Public reviews read access" ON course_reviews;
+DROP POLICY IF EXISTS "Users can insert their own review" ON course_reviews;
+DROP POLICY IF EXISTS "Users can update their own review" ON course_reviews;
+DROP POLICY IF EXISTS "Users can delete their own review" ON course_reviews;
+
 -- Anyone can read reviews
 CREATE POLICY "Public reviews read access"
   ON course_reviews FOR SELECT
@@ -88,3 +98,17 @@ CREATE POLICY "Users can delete their own review"
   ON course_reviews FOR DELETE
   TO authenticated
   USING (auth.uid() = user_id);
+
+-- 6. Backfill existing reviews stats into courses table
+DO $$
+DECLARE
+  rec RECORD;
+BEGIN
+  FOR rec IN SELECT DISTINCT course_id FROM course_reviews LOOP
+    UPDATE courses
+    SET 
+      rating_avg = (SELECT COALESCE(ROUND(AVG(rating)::numeric, 2), 0) FROM course_reviews WHERE course_id = rec.course_id),
+      rating_count = (SELECT COUNT(*) FROM course_reviews WHERE course_id = rec.course_id)
+    WHERE id = rec.course_id;
+  END LOOP;
+END $$;
