@@ -7,6 +7,8 @@ import { cookies } from 'next/headers'
 import ProgressBar from '@/components/ProgressBar'
 import EnrollButton from '@/components/EnrollButton'
 import { checkIsEnrolled } from '@/actions/enrollment'
+import CourseReviewsSection from '@/components/CourseReviewsSection'
+import { getCourseReviews, getUserCourseReview } from '@/actions/reviews'
 
 type Props = {
   params: Promise<{ id: string }>
@@ -46,6 +48,9 @@ export default async function CourseDetailPage(props: Props) {
 
   const isEnrolled = await checkIsEnrolled(course.id)
   const cookieStore = await cookies()
+
+  const { reviews, stats } = await getCourseReviews(course.id)
+  const userReview = await getUserCourseReview(course.id)
 
   const totalLessons = course.lessons.length
   const completedLessonsCount = isEnrolled ? course.lessons.filter(lesson =>
@@ -234,6 +239,15 @@ export default async function CourseDetailPage(props: Props) {
             )
           })}
         </div>
+
+        {/* COURSE REVIEWS & RATING SECTION */}
+        <CourseReviewsSection
+          courseId={course.id}
+          isEnrolled={isEnrolled}
+          initialReviews={reviews}
+          initialStats={stats}
+          initialUserReview={userReview}
+        />
       </div>
     </div>
   )
