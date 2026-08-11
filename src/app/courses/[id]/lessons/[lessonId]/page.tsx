@@ -3,7 +3,12 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import MarkCompleteButton from '@/components/MarkCompleteButton'
 import VideoPlayer from '@/components/VideoPlayer'
+import LessonComments from '@/components/LessonComments'
+import LessonMaterials from '@/components/LessonMaterials'
 import { checkIsEnrolled } from '@/actions/enrollment'
+import { getComments } from '@/actions/comments'
+import { getLessonMaterials } from '@/actions/materials'
+import { createClient } from '@/lib/supabase/server'
 
 type Props = {
   params: Promise<{ id: string; lessonId: string }>
@@ -24,6 +29,14 @@ export default async function LessonDetailPage(props: Props) {
   }
 
   const isCompleted = lesson.status === 'completed'
+
+  // Fetch comments, materials, and current user for lesson page
+  const [comments, materials, supabase] = await Promise.all([
+    getComments(params.lessonId),
+    getLessonMaterials(params.lessonId),
+    createClient(),
+  ])
+  const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <div className="min-h-screen pb-20 pt-8 px-4 sm:px-6 animate-fade-in">
@@ -100,6 +113,22 @@ export default async function LessonDetailPage(props: Props) {
             </p>
           </div>
         </div>
+
+        {/* Lesson Materials / Documents Section */}
+        <LessonMaterials
+          lessonId={params.lessonId}
+          courseId={params.id}
+          initialMaterials={materials}
+          currentUserId={user?.id}
+        />
+
+        {/* Q&A / Comments Section */}
+        <LessonComments
+          lessonId={params.lessonId}
+          courseId={params.id}
+          initialComments={comments}
+          currentUserId={user?.id}
+        />
       </div>
     </div>
   )

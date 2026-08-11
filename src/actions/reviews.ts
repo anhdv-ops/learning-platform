@@ -164,7 +164,28 @@ export async function addOrUpdateReview(
     return { ok: false, error: upsertError.message }
   }
 
+  // Defense-in-depth: explicit sync recalculation to guarantee courses table is updated
+  try {
+    const { data: aggregateData } = await supabase
+      .from('course_reviews')
+      .select('rating')
+      .eq('course_id', courseId)
+
+    if (aggregateData) {
+      const count = aggregateData.length
+      const avg = count > 0 ? Number((aggregateData.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0) / count).toFixed(2)) : 0
+
+      await supabase
+        .from('courses')
+        .update({ rating_avg: avg, rating_count: count })
+        .eq('id', courseId)
+    }
+  } catch (calcErr) {
+    console.warn('Lỗi khi tự động cập nhật thống kê khóa học:', calcErr)
+  }
+
   revalidatePath('/courses')
+  revalidatePath('/my-courses')
   revalidatePath(`/courses/${courseId}`)
   return { ok: true }
 }
@@ -200,7 +221,26 @@ export async function deleteReview(
     return { ok: false, error: deleteError.message }
   }
 
+  // Defense-in-depth: explicit sync recalculation after delete
+  try {
+    const { data: aggregateData } = await supabase
+      .from('course_reviews')
+      .select('rating')
+      .eq('course_id', courseId)
+
+    const count = aggregateData ? aggregateData.length : 0
+    const avg = count > 0 ? Number((aggregateData!.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0) / count).toFixed(2)) : 0
+
+    await supabase
+      .from('courses')
+      .update({ rating_avg: avg, rating_count: count })
+      .eq('id', courseId)
+  } catch (calcErr) {
+    console.warn('Lỗi khi tự động cập nhật thống kê khóa học:', calcErr)
+  }
+
   revalidatePath('/courses')
+  revalidatePath('/my-courses')
   revalidatePath(`/courses/${courseId}`)
   return { ok: true }
 }
