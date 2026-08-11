@@ -101,6 +101,8 @@ export async function getCourses(
       totalLessons,
       progress,
       status,
+      ratingAvg: Number(c.rating_avg) || 0,
+      ratingCount: Number(c.rating_count) || 0,
       lessons: [],
     }
   })
@@ -191,6 +193,8 @@ export async function getCourseById(id: string): Promise<Course | null> {
     totalLessons,
     progress,
     status: progress === 100 ? 'completed' : 'in-progress',
+    ratingAvg: Number(courseData.rating_avg) || 0,
+    ratingCount: Number(courseData.rating_count) || 0,
     lessons,
   }
 }
@@ -201,4 +205,70 @@ export async function getLessonById(courseId: string, lessonId: string): Promise
 
   const lesson = course.lessons.find((l) => l.id === lessonId)
   return lesson || null
+}
+
+export async function getMyCourses(): Promise<Course[]> {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  // 1. Lấy danh sách khóa học user đã đăng ký
+  const { data: enrollData, error: enrollError } = await supabase
+    .from('enrollments')
+    .select('course_id')
+    .eq('user_id', user.id)
+
+  if (enrollError || !enrollData || enrollData.length === 0) {
+    return []
+  }
+
+  const courseIds = enrollData.map((e: { course_id: string }) => e.course_id)
+
+  // 2. Lấy chi tiết các khóa học này
+  const { data: coursesData, error: coursesError } = await supabase
+    .from('courses')
+    .select('*')
+    .in('id', courseIds)
+
+  if (coursesError || !coursesData) {
+    return []
+  }
+
+  // 3. Lấy tiến độ các bài học đã hoàn thành
+  const { data: progressData } = await supabase
+    .from('user_progress')
+    .select('course_id')
+    .eq('user_id', user.id)
+    .eq('is_completed', true)
+
+  const userProgressMap: Record<string, number> = {}
+  if (progressData) {
+    progressData.forEach((item: { course_id: string }) => {
+      userProgressMap[item.course_id] = (userProgressMap[item.course_id] || 0) + 1
+    })
+  }
+
+  // 4. Map dữ liệu khóa học kèm tiến độ
+  return coursesData.map((c: any) => {
+    const totalLessons = c.total_lessons || c.totalLessons || 0
+    const completedLessons = userProgressMap[c.id] || 0
+    const progress = totalLessons > 0 ? Math.min(100, Math.round((completedLessons / totalLessons) * 100)) : 0
+    const status = progress === 100 ? 'completed' : 'in-progress'
+
+    return {
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      thumbnail: c.thumbnail,
+      level: c.level,
+      kindOfCourse: c.kind_of_course || c.kindOfCourse,
+      totalLessons,
+      progress,
+      status,
+      ratingAvg: Number(c.rating_avg) || 0,
+      ratingCount: Number(c.rating_count) || 0,
+      lessons: [],
+    }
+  })
 }
