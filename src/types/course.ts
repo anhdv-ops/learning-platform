@@ -19,5 +19,7 @@ export interface Course {
   totalLessons: number;
   progress: number;
   status?: string;
+  ratingAvg?: number;
+  ratingCount?: number;
   lessons: Lesson[];
 }
