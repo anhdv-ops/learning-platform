@@ -1,7 +1,18 @@
+import { Metadata } from 'next'
 import { getCourses } from '@/lib/api'
 import CourseCard from '@/components/CourseCard'
 import SearchFilter from '@/components/SearchFilter'
 import Pagination from '@/components/Pagination'
+
+export const metadata: Metadata = {
+  title: 'Danh sách khóa học',
+  description: 'Khám phá tất cả các khóa học tiếng Anh phong phú theo các trình độ từ sơ cấp đến nâng cao tại LishTex.',
+  openGraph: {
+    title: 'Danh sách khóa học | LishTex',
+    description: 'Khám phá tất cả các khóa học tiếng Anh phong phú tại LishTex.',
+    url: '/courses',
+  },
+}
 
 export const dynamic = 'force-dynamic'
 

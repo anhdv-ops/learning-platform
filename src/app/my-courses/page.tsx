@@ -1,7 +1,13 @@
+import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getMyCourses } from '@/lib/api'
 import MyCoursesClient from '@/components/MyCoursesClient'
+
+export const metadata: Metadata = {
+  title: 'Khóa học của tôi',
+  description: 'Theo dõi tiến độ học tập và tiếp tục các khóa học tiếng Anh bạn đã đăng ký tại LishTex.',
+}
 
 export default async function MyCoursesPage() {
   const supabase = await createClient()
