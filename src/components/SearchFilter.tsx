@@ -73,13 +73,6 @@ export default function SearchFilter() {
           className="glass-input block w-full pl-4 pr-10 py-2.5 min-h-[44px] text-sm appearance-none cursor-pointer"
         >
           <option value="" className="bg-[#12121a] text-[#f0f0f5]">Tất cả Level</option>
-          <option value="Basic" className="bg-[#12121a] text-[#f0f0f5]">Basic (Cơ bản)</option>
-          <option value="7.0+" className="bg-[#12121a] text-[#f0f0f5]">IELTS 7.0+</option>
-          <option value="750+" className="bg-[#12121a] text-[#f0f0f5]">TOEIC 750+</option>
-          <option value="5.0+" className="bg-[#12121a] text-[#f0f0f5]">IELTS 5.0+</option>
-          <option value="6.0+" className="bg-[#12121a] text-[#f0f0f5]">IELTS 6.0+</option>
-          <option value="500+" className="bg-[#12121a] text-[#f0f0f5]">TOEIC 500+</option>
-          <option value="650+" className="bg-[#12121a] text-[#f0f0f5]">TOEIC 650+</option>
           <option value="S" className="bg-[#12121a] text-[#f0f0f5]">S (Starter)</option>
           <option value="Pres" className="bg-[#12121a] text-[#f0f0f5]">Pres (Pre-Starter)</option>
           <option value="TC" className="bg-[#12121a] text-[#f0f0f5]">TC (Target Course)</option>

@@ -27,7 +27,27 @@ export default function RootLayout({
       className={`${inter.variable} h-full`}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-bg-primary text-text-primary antialiased" style={{ backgroundColor: 'var(--bg-primary, #0a0a0f)', color: 'var(--text-primary, #f0f0f5)' }}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('lishtex-theme');
+                  if (saved === 'light') {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full bg-bg-primary text-text-primary antialiased">
         <ThemeProvider>
           <VideoProvider>
             <AppShell>

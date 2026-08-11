@@ -1,8 +1,9 @@
 import { getLessonById } from '@/lib/api'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import MarkCompleteButton from '@/components/MarkCompleteButton'
 import VideoPlayer from '@/components/VideoPlayer'
+import { checkIsEnrolled } from '@/actions/enrollment'
 
 type Props = {
   params: Promise<{ id: string; lessonId: string }>
@@ -10,6 +11,11 @@ type Props = {
 
 export default async function LessonDetailPage(props: Props) {
   const params = await props.params
+
+  const isEnrolled = await checkIsEnrolled(params.id)
+  if (!isEnrolled) {
+    redirect(`/courses/${params.id}`)
+  }
 
   const lesson = await getLessonById(params.id, params.lessonId)
 
@@ -62,7 +68,7 @@ export default async function LessonDetailPage(props: Props) {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 text-[11px] font-bold uppercase tracking-wider rounded-full border border-purple-500/30">
+                <span className="px-3 py-1 bg-purple-500/10 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 text-[11px] font-bold uppercase tracking-wider rounded-full border border-purple-500/20 dark:border-purple-500/30">
                   Bài {lesson.order}
                 </span>
                 <span className="flex items-center gap-1.5 text-xs text-text-secondary font-semibold">

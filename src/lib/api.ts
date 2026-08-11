@@ -56,9 +56,20 @@ export async function getCourses(
     }
   }
 
-  // 3. Nếu user đã đăng nhập, lấy danh sách các bài học user đã hoàn thành trong user_progress
+  // 3. Nếu user đã đăng nhập, lấy danh sách khóa học user đã đăng ký và các bài học đã hoàn thành
   let userProgressMap: Record<string, number> = {}
+  const enrolledCourseIds = new Set<string>()
+
   if (user) {
+    const { data: enrollData } = await supabase
+      .from('enrollments')
+      .select('course_id')
+      .eq('user_id', user.id)
+
+    if (enrollData) {
+      enrollData.forEach((e: { course_id: string }) => enrolledCourseIds.add(e.course_id))
+    }
+
     const { data: progressData } = await supabase
       .from('user_progress')
       .select('course_id')
@@ -72,11 +83,12 @@ export async function getCourses(
     }
   }
 
-  // 4. Map dữ liệu khóa học kèm tiến độ thực tế của user
+  // 4. Map dữ liệu khóa học kèm tiến độ thực tế của user (chỉ tính nếu đã đăng ký)
   const courses: Course[] = data.map((c: any) => {
+    const isEnrolled = enrolledCourseIds.has(c.id)
     const totalLessons = c.total_lessons || c.totalLessons || 0
-    const completedLessons = userProgressMap[c.id] || 0
-    const progress = totalLessons > 0 ? Math.min(100, Math.round((completedLessons / totalLessons) * 100)) : 0
+    const completedLessons = isEnrolled ? (userProgressMap[c.id] || 0) : 0
+    const progress = isEnrolled && totalLessons > 0 ? Math.min(100, Math.round((completedLessons / totalLessons) * 100)) : 0
     const status = progress === 100 ? 'completed' : 'in-progress'
 
     return {
@@ -123,25 +135,36 @@ export async function getCourseById(id: string): Promise<Course | null> {
     .eq('course_id', id)
     .order('order', { ascending: true })
 
-  // Lấy tiến độ bài học của user đối với khóa học này
+  // Lấy thông tin user & đăng ký
   const { data: { user } } = await supabase.auth.getUser()
   const completedLessonIds = new Set<string>()
+  let isEnrolled = false
 
   if (user) {
-    const { data: userProgress } = await supabase
-      .from('user_progress')
-      .select('lesson_id')
+    const { data: enrollData } = await supabase
+      .from('enrollments')
+      .select('id')
       .eq('user_id', user.id)
       .eq('course_id', id)
-      .eq('is_completed', true)
+      .maybeSingle()
 
-    if (userProgress) {
-      userProgress.forEach((p: { lesson_id: string }) => completedLessonIds.add(p.lesson_id))
+    if (enrollData) {
+      isEnrolled = true
+      const { data: userProgress } = await supabase
+        .from('user_progress')
+        .select('lesson_id')
+        .eq('user_id', user.id)
+        .eq('course_id', id)
+        .eq('is_completed', true)
+
+      if (userProgress) {
+        userProgress.forEach((p: { lesson_id: string }) => completedLessonIds.add(p.lesson_id))
+      }
     }
   }
 
   const lessons: Lesson[] = (lessonsData || []).map((l: any) => {
-    const isCompleted = completedLessonIds.has(l.id)
+    const isCompleted = isEnrolled && completedLessonIds.has(l.id)
     return {
       id: l.id,
       courseId: l.course_id || l.courseId,
@@ -155,8 +178,8 @@ export async function getCourseById(id: string): Promise<Course | null> {
   })
 
   const totalLessons = courseData.total_lessons || lessons.length || 0
-  const completedCount = completedLessonIds.size
-  const progress = totalLessons > 0 ? Math.min(100, Math.round((completedCount / totalLessons) * 100)) : 0
+  const completedCount = isEnrolled ? completedLessonIds.size : 0
+  const progress = isEnrolled && totalLessons > 0 ? Math.min(100, Math.round((completedCount / totalLessons) * 100)) : 0
 
   return {
     id: courseData.id,

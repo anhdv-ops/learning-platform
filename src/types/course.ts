@@ -14,7 +14,7 @@ export interface Course {
   title: string;
   description: string;
   thumbnail: string;
-  level: string;
+  level: 'S' | 'Pres' | 'TC' | 'MTC';
   kindOfCourse: string;
   totalLessons: number;
   progress: number;

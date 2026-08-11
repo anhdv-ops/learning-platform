@@ -91,7 +91,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   }
                 `}
               >
-                <span className={isActive ? 'text-purple-400' : 'text-text-tertiary group-hover:text-text-secondary'}>
+                <span className={isActive ? 'text-purple-600 dark:text-purple-400' : 'text-text-tertiary group-hover:text-text-secondary'}>
                   {item.icon}
                 </span>
                 {item.label}

@@ -66,7 +66,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && pathname.startsWith('/auth')) {
+  if (user && pathname.startsWith('/auth') && pathname !== '/auth/reset-password' && pathname !== '/auth/callback') {
     // user is logged in, potentially respond by redirecting the user to the home page
     const url = request.nextUrl.clone()
     url.pathname = '/courses'

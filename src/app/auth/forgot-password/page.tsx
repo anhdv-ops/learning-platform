@@ -2,25 +2,19 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { loginAction } from '@/actions/auth'
+import { forgotPasswordAction } from '@/actions/auth'
 
-export default function LoginPage() {
-  const router = useRouter()
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [submitError, setSubmitError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Derived validation state
   const isEmailTouched = email.trim() !== ''
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const emailError = isEmailTouched && !emailRegex.test(email) ? 'Email không đúng định dạng' : ''
 
-  const isPasswordTouched = password.trim() !== ''
-  const passwordError = isPasswordTouched && password.length < 6 ? 'Mật khẩu phải có ít nhất 6 ký tự' : ''
-
-  const isValid = isEmailTouched && isPasswordTouched && !emailError && !passwordError
+  const isValid = isEmailTouched && !emailError
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,22 +22,21 @@ export default function LoginPage() {
 
     setIsLoading(true)
     setSubmitError('')
+    setSuccessMsg('')
 
     const formData = new FormData()
     formData.append('email', email)
-    formData.append('password', password)
 
     try {
-      const result = await loginAction(formData)
+      const result = await forgotPasswordAction(formData)
       if (result && result.success) {
-        router.push('/courses')
-        router.refresh()
+        setSuccessMsg('Đã gửi liên kết khôi phục mật khẩu đến email của bạn! Vui lòng kiểm tra hộp thư (bao gồm cả thư rác).')
       } else if (result && !result.success) {
-        setSubmitError(result.error || 'Đăng nhập thất bại. Vui lòng thử lại.')
-        setIsLoading(false)
+        setSubmitError(result.error || 'Không thể gửi email khôi phục. Vui lòng thử lại.')
       }
     } catch {
       setSubmitError('Đã xảy ra sự cố kết nối. Vui lòng thử lại.')
+    } finally {
       setIsLoading(false)
     }
   }
@@ -54,12 +47,11 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-bg-primary">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-600/10 blur-[120px] animate-gradient-shift" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-500/10 blur-[120px] animate-gradient-shift" style={{ animationDelay: '4s' }} />
-        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] rounded-full bg-purple-500/5 blur-[80px] animate-float" />
       </div>
 
       <div className="relative z-10 max-w-md w-full animate-slide-up">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-10">
+        <div className="flex items-center justify-center gap-3 mb-8">
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-600/25">
             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -70,10 +62,19 @@ export default function LoginPage() {
 
         {/* Glass Card */}
         <div className="glass-card p-8 sm:p-10 animate-pulse-glow" style={{ borderRadius: 'var(--radius-2xl)' }}>
-          <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-text-primary mb-2">Chào mừng trở lại</h1>
-            <p className="text-sm text-text-secondary">Đăng nhập để tiếp tục hành trình học tập</p>
+          <div className="mb-6 text-center">
+            <h1 className="text-2xl font-bold text-text-primary mb-2">Quên mật khẩu?</h1>
+            <p className="text-sm text-text-secondary">Nhập email đăng ký để nhận liên kết khôi phục mật khẩu</p>
           </div>
+
+          {successMsg && (
+            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-3 animate-scale-in" style={{ borderRadius: 'var(--radius-lg)' }}>
+              <svg className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-sm font-medium text-emerald-400 dark:text-emerald-300">{successMsg}</p>
+            </div>
+          )}
 
           {submitError && (
             <div className="mb-6 p-4 bg-error-soft border border-error/20 rounded-xl flex items-center gap-3 animate-scale-in" style={{ borderRadius: 'var(--radius-lg)' }}>
@@ -86,50 +87,27 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1.5" htmlFor="login-email">
-                Email
+              <label className="block text-sm font-medium text-text-secondary mb-1.5" htmlFor="forgot-email">
+                Email đăng ký
               </label>
               <input
-                id="login-email"
+                id="forgot-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nhap@email.com"
-                disabled={isLoading}
+                disabled={isLoading || !!successMsg}
                 className={`glass-input w-full px-4 py-3 text-sm ${
                   emailError ? '!border-error focus:!shadow-[0_0_0_3px_rgba(239,68,68,0.15)]' : ''
                 }`}
               />
-              {emailError && <p className="mt-1.5 text-sm font-medium text-error">{emailError}</p>}
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-sm font-medium text-text-secondary" htmlFor="login-password">
-                  Mật khẩu
-                </label>
-                <Link href="/auth/forgot-password" className="text-xs font-semibold gradient-text hover:opacity-80 transition-opacity">
-                  Quên mật khẩu?
-                </Link>
-              </div>
-              <input
-                id="login-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                disabled={isLoading}
-                className={`glass-input w-full px-4 py-3 text-sm ${
-                  passwordError ? '!border-error focus:!shadow-[0_0_0_3px_rgba(239,68,68,0.15)]' : ''
-                }`}
-              />
-              {passwordError && <p className="mt-1.5 text-sm font-medium text-error">{passwordError}</p>}
+              {emailError && <p className="mt-1.5 text-xs font-medium text-error">{emailError}</p>}
             </div>
 
             <button
               type="submit"
-              disabled={!isValid || isLoading}
-              className="btn-gradient w-full py-3.5 px-4 text-sm font-semibold flex items-center justify-center gap-2"
+              disabled={!isValid || isLoading || !!successMsg}
+              className="btn-gradient w-full py-3.5 px-4 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -137,36 +115,20 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Đang xử lý...
+                  Đang gửi...
                 </>
               ) : (
-                'Đăng nhập'
+                'Gửi yêu cầu khôi phục'
               )}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-text-secondary">
-            Chưa có tài khoản?{' '}
-            <Link href="/auth/signup" className="font-semibold gradient-text hover:opacity-80 transition-opacity">
-              Đăng ký ngay
+            Nhớ ra mật khẩu?{' '}
+            <Link href="/auth/login" className="font-semibold gradient-text hover:opacity-80 transition-opacity">
+              Quay lại đăng nhập
             </Link>
           </p>
-        </div>
-
-        {/* Features Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mt-8 animate-slide-up stagger-3">
-          {['500+ Bài học', 'AI chấm điểm', 'Chứng chỉ quốc tế'].map((feature) => (
-            <span
-              key={feature}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-subtle rounded-full"
-              style={{ borderRadius: 'var(--radius-full)' }}
-            >
-              <svg className="w-3.5 h-3.5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {feature}
-            </span>
-          ))}
         </div>
       </div>
     </div>
